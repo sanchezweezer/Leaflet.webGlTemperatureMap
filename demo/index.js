@@ -49,7 +49,7 @@ import('./config').then((defaultData) => {
 
   const startFlyPoint = L.marker(startPoint).addTo(map);
   const endFlyPoint = L.marker({ lat: 55.67, lng: 37.72 }).addTo(map);
-  const tempMap = L.canvasLayer().addTo(map);
+  const tempMap = L.webGlTemperatureMapLayer().addTo(map);
 
   tempMap.setPoints(arr);
 

@@ -796,7 +796,7 @@
           return (e = e || 1), new S((t.x / e - this._b) / this._a, (t.y / e - this._d) / this._c);
         }
       };
-      var J = i({}, H, {
+      var G = i({}, H, {
           code: 'EPSG:3857',
           projection: W,
           transformation: (function() {
@@ -804,8 +804,8 @@
             return V(t, 0.5, -t, 0.5);
           })()
         }),
-        K = i({}, J, { code: 'EPSG:900913' });
-      function G(t) {
+        J = i({}, G, { code: 'EPSG:900913' });
+      function K(t) {
         return document.createElementNS('http://www.w3.org/2000/svg', t);
       }
       function Y(t, e) {
@@ -867,7 +867,7 @@
           return t;
         },
         Mt = !!document.createElement('canvas').getContext,
-        Et = !(!document.createElementNS || !G('svg').createSVGRect),
+        Et = !(!document.createElementNS || !K('svg').createSVGRect),
         At =
           !Et &&
           (function() {
@@ -977,8 +977,8 @@
       }
       var qt = xt ? 'MSPointerDown' : bt ? 'pointerdown' : 'touchstart',
         Vt = xt ? 'MSPointerUp' : bt ? 'pointerup' : 'touchend',
-        Jt = '_leaflet_';
-      function Kt(t, e, i) {
+        Gt = '_leaflet_';
+      function Jt(t, e, i) {
         var n,
           o,
           r = !1;
@@ -1008,19 +1008,19 @@
           }
         }
         return (
-          (t[Jt + qt + i] = s),
-          (t[Jt + Vt + i] = a),
-          (t[Jt + 'dblclick' + i] = e),
+          (t[Gt + qt + i] = s),
+          (t[Gt + Vt + i] = a),
+          (t[Gt + 'dblclick' + i] = e),
           t.addEventListener(qt, s, !!zt && { passive: !1 }),
           t.addEventListener(Vt, a, !!zt && { passive: !1 }),
           t.addEventListener('dblclick', e, !1),
           this
         );
       }
-      function Gt(t, e) {
-        var i = t[Jt + qt + e],
-          n = t[Jt + Vt + e],
-          o = t[Jt + 'dblclick' + e];
+      function Kt(t, e) {
+        var i = t[Gt + qt + e],
+          n = t[Gt + Vt + e],
+          o = t[Gt + 'dblclick' + e];
         return (
           t.removeEventListener(qt, i, !!zt && { passive: !1 }),
           t.removeEventListener(Vt, n, !!zt && { passive: !1 }),
@@ -1220,7 +1220,7 @@
           a = r;
         bt && 0 === e.indexOf('touch')
           ? jt(t, e, r, o)
-          : !wt || 'dblclick' !== e || !Kt || (bt && at)
+          : !wt || 'dblclick' !== e || !Jt || (bt && at)
           ? 'addEventListener' in t
             ? 'mousewheel' === e
               ? t.addEventListener('onwheel' in t ? 'wheel' : 'mousewheel', r, !!zt && { passive: !1 })
@@ -1242,7 +1242,7 @@
                   }),
                 t.addEventListener(e, r, !1))
             : 'attachEvent' in t && t.attachEvent('on' + e, r)
-          : Kt(t, r, o),
+          : Jt(t, r, o),
           (t[ke] = t[ke] || {}),
           (t[ke][o] = r);
       }
@@ -1259,13 +1259,13 @@
                 ? t.removeEventListener(Zt, n, !1)
                 : 'touchend' === e && (t.removeEventListener(Bt, n, !1), t.removeEventListener(It, n, !1));
             })(t, e, o)
-          : !wt || 'dblclick' !== e || !Gt || (bt && at)
+          : !wt || 'dblclick' !== e || !Kt || (bt && at)
           ? 'removeEventListener' in t
             ? 'mousewheel' === e
               ? t.removeEventListener('onwheel' in t ? 'wheel' : 'mousewheel', r, !!zt && { passive: !1 })
               : t.removeEventListener('mouseenter' === e ? 'mouseover' : 'mouseleave' === e ? 'mouseout' : e, r, !1)
             : 'detachEvent' in t && t.detachEvent('on' + e, r)
-          : Gt(t, o),
+          : Kt(t, o),
           (t[ke][o] = null);
       }
       function Be(t) {
@@ -1336,7 +1336,7 @@
         }
         return i !== t;
       }
-      var Je = (Object.freeze || Object)({
+      var Ge = (Object.freeze || Object)({
           on: Ae,
           off: Ce,
           stopPropagation: Be,
@@ -1352,7 +1352,7 @@
           addListener: Ae,
           removeListener: Ce
         }),
-        Ke = C.extend({
+        Je = C.extend({
           run: function(t, e, i, n) {
             this.stop(),
               (this._el = t),
@@ -1387,9 +1387,9 @@
             return 1 - Math.pow(1 - t, this._easeOutPower);
           }
         }),
-        Ge = C.extend({
+        Ke = C.extend({
           options: {
-            crs: J,
+            crs: G,
             center: void 0,
             zoom: void 0,
             minZoom: void 0,
@@ -1503,7 +1503,7 @@
               return this._resetView(this.unproject(this.project(this.getCenter()).add(t)), this.getZoom()), this;
             if (
               (this._panAnim ||
-                ((this._panAnim = new Ke()),
+                ((this._panAnim = new Je()),
                 this._panAnim.on({ step: this._onPanTransitionStep, end: this._onPanTransitionEnd }, this)),
               e.noMoveStart || this.fire('movestart'),
               !1 !== e.animate)
@@ -2220,7 +2220,7 @@
         Xe = function(t) {
           return new Ye(t);
         };
-      Ge.include({
+      Ke.include({
         addControl: function(t) {
           return t.addTo(this), this;
         },
@@ -2497,8 +2497,8 @@
               (this._disabled || t._zoom === t.getMaxZoom()) && de(this._zoomInButton, e);
           }
         });
-      Ge.mergeOptions({ zoomControl: !0 }),
-        Ge.addInitHook(function() {
+      Ke.mergeOptions({ zoomControl: !0 }),
+        Ke.addInitHook(function() {
           this.options.zoomControl && ((this.zoomControl = new $e()), this.addControl(this.zoomControl));
         });
       var ti = Ye.extend({
@@ -2589,8 +2589,8 @@
             }
           }
         });
-      Ge.mergeOptions({ attributionControl: !0 }),
-        Ge.addInitHook(function() {
+      Ke.mergeOptions({ attributionControl: !0 }),
+        Ke.addInitHook(function() {
           this.options.attributionControl && new ei().addTo(this);
         }),
         (Ye.Layers = Qe),
@@ -2920,7 +2920,7 @@
           },
           infinite: !0
         });
-      (U.Earth = H), (U.EPSG3395 = Li), (U.EPSG3857 = J), (U.EPSG900913 = K), (U.EPSG4326 = Pi), (U.Simple = Ti);
+      (U.Earth = H), (U.EPSG3395 = Li), (U.EPSG3857 = G), (U.EPSG900913 = J), (U.EPSG4326 = Pi), (U.Simple = Ti);
       var zi = C.extend({
         options: { pane: 'overlayPane', attribution: null, bubblingMouseEvents: !0 },
         addTo: function(t) {
@@ -2965,7 +2965,7 @@
           }
         }
       });
-      Ge.include({
+      Ke.include({
         addLayer: function(t) {
           if (!t._layerAdd) throw new Error('The provided object is not a Layer.');
           var e = s(t);
@@ -3863,17 +3863,17 @@
           ? t
           : { type: 'Feature', properties: {}, geometry: t };
       }
-      var Ji = {
+      var Gi = {
         toGeoJSON: function(t) {
           return qi(this, { type: 'Point', coordinates: Hi(this.getLatLng(), t) });
         }
       };
-      function Ki(t, e) {
+      function Ji(t, e) {
         return new Ni(t, e);
       }
-      Si.include(Ji),
-        Ii.include(Ji),
-        Bi.include(Ji),
+      Si.include(Gi),
+        Ii.include(Gi),
+        Bi.include(Gi),
         Oi.include({
           toGeoJSON: function(t) {
             var e = !_i(this._latlngs);
@@ -3921,7 +3921,7 @@
             );
           }
         });
-      var Gi = Ki,
+      var Ki = Ji,
         Yi = zi.extend({
           options: {
             opacity: 1,
@@ -4268,8 +4268,8 @@
             return B(this._source && this._source._getPopupAnchor ? this._source._getPopupAnchor() : [0, 0]);
           }
         });
-      Ge.mergeOptions({ closePopupOnClick: !0 }),
-        Ge.include({
+      Ke.mergeOptions({ closePopupOnClick: !0 }),
+        Ke.include({
           openPopup: function(t, e, i) {
             return (
               t instanceof tn || (t = new tn(i).setContent(t)),
@@ -4442,7 +4442,7 @@
           );
         }
       });
-      Ge.include({
+      Ke.include({
         openTooltip: function(t, e, i) {
           return (
             t instanceof en || (t = new en(i).setContent(t)),
@@ -5478,7 +5478,7 @@
             ue(t._container);
           }
         },
-        pn = At ? cn : G,
+        pn = At ? cn : K,
         fn = hn.extend({
           getEvents: function() {
             var t = hn.prototype.getEvents.call(this);
@@ -5576,7 +5576,7 @@
         return Et || At ? new fn(t) : null;
       }
       At && fn.include(dn),
-        Ge.include({
+        Ke.include({
           getRenderer: function(t) {
             var e =
               t.options.renderer || this._getPaneRenderer(t.options.pane) || this.options.renderer || this._renderer;
@@ -5611,7 +5611,7 @@
         (Ni.latLngsToCoords = Wi),
         (Ni.getFeature = qi),
         (Ni.asFeature = Vi),
-        Ge.mergeOptions({ boxZoom: !0 });
+        Ke.mergeOptions({ boxZoom: !0 });
       var gn = ii.extend({
         initialize: function(t) {
           (this._map = t),
@@ -5686,7 +5686,7 @@
           27 === t.keyCode && this._finish();
         }
       });
-      Ge.addInitHook('addHandler', 'boxZoom', gn), Ge.mergeOptions({ doubleClickZoom: !0 });
+      Ke.addInitHook('addHandler', 'boxZoom', gn), Ke.mergeOptions({ doubleClickZoom: !0 });
       var vn = ii.extend({
         addHooks: function() {
           this._map.on('dblclick', this._onDoubleClick, this);
@@ -5702,8 +5702,8 @@
           'center' === e.options.doubleClickZoom ? e.setZoom(o) : e.setZoomAround(t.containerPoint, o);
         }
       });
-      Ge.addInitHook('addHandler', 'doubleClickZoom', vn),
-        Ge.mergeOptions({
+      Ke.addInitHook('addHandler', 'doubleClickZoom', vn),
+        Ke.mergeOptions({
           dragging: !0,
           inertia: !nt,
           inertiaDeceleration: 3400,
@@ -5821,7 +5821,7 @@
           }
         }
       });
-      Ge.addInitHook('addHandler', 'dragging', yn), Ge.mergeOptions({ keyboard: !0, keyboardPanDelta: 80 });
+      Ke.addInitHook('addHandler', 'dragging', yn), Ke.mergeOptions({ keyboard: !0, keyboardPanDelta: 80 });
       var xn = ii.extend({
         keyCodes: {
           left: [37],
@@ -5904,8 +5904,8 @@
           }
         }
       });
-      Ge.addInitHook('addHandler', 'keyboard', xn),
-        Ge.mergeOptions({ scrollWheelZoom: !0, wheelDebounceTime: 40, wheelPxPerZoomLevel: 60 });
+      Ke.addInitHook('addHandler', 'keyboard', xn),
+        Ke.mergeOptions({ scrollWheelZoom: !0, wheelDebounceTime: 40, wheelPxPerZoomLevel: 60 });
       var bn = ii.extend({
         addHooks: function() {
           Ae(this._map._container, 'mousewheel', this._onWheelScroll, this), (this._delta = 0);
@@ -5937,7 +5937,7 @@
               ('center' === t.options.scrollWheelZoom ? t.setZoom(e + s) : t.setZoomAround(this._lastMousePos, e + s));
         }
       });
-      Ge.addInitHook('addHandler', 'scrollWheelZoom', bn), Ge.mergeOptions({ tap: !0, tapTolerance: 15 });
+      Ke.addInitHook('addHandler', 'scrollWheelZoom', bn), Ke.mergeOptions({ tap: !0, tapTolerance: 15 });
       var wn = ii.extend({
         addHooks: function() {
           Ae(this._map._container, 'touchstart', this._onDown, this);
@@ -5991,8 +5991,8 @@
             e.target.dispatchEvent(i);
         }
       });
-      wt && !bt && Ge.addInitHook('addHandler', 'tap', wn),
-        Ge.mergeOptions({ touchZoom: wt && !nt, bounceAtZoomLimits: !0 });
+      wt && !bt && Ke.addInitHook('addHandler', 'tap', wn),
+        Ke.mergeOptions({ touchZoom: wt && !nt, bounceAtZoomLimits: !0 });
       var Ln = ii.extend({
         addHooks: function() {
           de(this._map._container, 'leaflet-touch-zoom'),
@@ -6060,14 +6060,14 @@
             : (this._zooming = !1);
         }
       });
-      Ge.addInitHook('addHandler', 'touchZoom', Ln),
-        (Ge.BoxZoom = gn),
-        (Ge.DoubleClickZoom = vn),
-        (Ge.Drag = yn),
-        (Ge.Keyboard = xn),
-        (Ge.ScrollWheelZoom = bn),
-        (Ge.Tap = wn),
-        (Ge.TouchZoom = Ln),
+      Ke.addInitHook('addHandler', 'touchZoom', Ln),
+        (Ke.BoxZoom = gn),
+        (Ke.DoubleClickZoom = vn),
+        (Ke.Drag = yn),
+        (Ke.Keyboard = xn),
+        (Ke.ScrollWheelZoom = bn),
+        (Ke.Tap = wn),
+        (Ke.TouchZoom = Ln),
         (Object.freeze = e),
         (t.version = '1.6.0'),
         (t.Control = Ye),
@@ -6082,9 +6082,9 @@
         (t.bind = o),
         (t.stamp = s),
         (t.setOptions = p),
-        (t.DomEvent = Je),
+        (t.DomEvent = Ge),
         (t.DomUtil = Ee),
-        (t.PosAnimation = Ke),
+        (t.PosAnimation = Je),
         (t.Draggable = hi),
         (t.LineUtil = gi),
         (t.PolyUtil = yi),
@@ -6101,8 +6101,8 @@
         (t.latLngBounds = N),
         (t.CRS = U),
         (t.GeoJSON = Ni),
-        (t.geoJSON = Ki),
-        (t.geoJson = Gi),
+        (t.geoJSON = Ji),
+        (t.geoJson = Ki),
         (t.Layer = zi),
         (t.LayerGroup = Mi),
         (t.layerGroup = function(t, e) {
@@ -6177,9 +6177,9 @@
         (t.rectangle = function(t, e) {
           return new mn(t, e);
         }),
-        (t.Map = Ge),
+        (t.Map = Ke),
         (t.map = function(t, e) {
-          return new Ge(t, e);
+          return new Ke(t, e);
         });
       var Pn = window.L;
       (t.noConflict = function() {
@@ -6720,7 +6720,7 @@
           this.init_buffers();
       });
     var c = l;
-    (o.a.CanvasLayer = o.a.Layer.extend({
+    (o.a.WebGlTemperatureMapLayer = o.a.Layer.extend({
       initialize: function(t) {
         (this._map = null),
           (this._canvas = null),
@@ -6735,13 +6735,14 @@
         return this._frame || (this._frame = o.a.Util.requestAnimFrame(this.drawLayer, this)), this;
       },
       setPoints: function(t) {
-        void 0 === t && (t = []),
-          this.tempMap &&
-            this._map &&
-            ((this.offsetState = this._map.containerPointToLatLng([0, 0])),
+        if ((void 0 === t && (t = []), this.tempMap && this._map))
+          return (
+            (this.offsetState = this._map.containerPointToLatLng([0, 0])),
             (this.zoomState = this._map.getZoom()),
             this.tempMap.set_points(t),
-            this.needRedraw());
+            this.needRedraw(),
+            this
+          );
       },
       _onLayerDidResize: function(t) {
         (this._canvas.width = t.newSize.x), (this._canvas.height = t.newSize.y);
@@ -6816,10 +6817,10 @@
         o.a.DomUtil.setTransform(this._canvas, i, e);
       }
     })),
-      (o.a.canvasLayer = function() {
-        return new o.a.CanvasLayer();
+      (o.a.webGlTemperatureMapLayer = function() {
+        return new o.a.WebGlTemperatureMapLayer();
       });
-    o.a.CanvasLayer;
+    o.a.WebGlTemperatureMapLayer;
     function d() {
       return (d =
         Object.assign ||
@@ -6864,7 +6865,7 @@
         var a = o.a.marker(n).addTo(s),
           h = o.a.marker({ lat: 55.67, lng: 37.72 }).addTo(s);
         o.a
-          .canvasLayer()
+          .webGlTemperatureMapLayer()
           .addTo(s)
           .setPoints(e);
         var l = 'start';

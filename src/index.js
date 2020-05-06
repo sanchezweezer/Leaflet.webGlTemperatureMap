@@ -1,7 +1,7 @@
 import L from 'leaflet';
 import TemperatureMapIdw from './temperature-map-idw';
 
-L.CanvasLayer = L.Layer.extend({
+L.WebGlTemperatureMapLayer = L.Layer.extend({
   // -- initialized is called on prototype
   initialize: function(options) {
     this._map = null;
@@ -31,7 +31,9 @@ L.CanvasLayer = L.Layer.extend({
       this.tempMap.set_points(points);
 
       this.needRedraw();
+      return this;
     }
+    return undefined;
   },
 
   // -------------------------------------------------------------
@@ -154,8 +156,8 @@ L.CanvasLayer = L.Layer.extend({
   }
 });
 
-L.canvasLayer = function() {
-  return new L.CanvasLayer();
+L.webGlTemperatureMapLayer = function() {
+  return new L.WebGlTemperatureMapLayer();
 };
 
-export default L.CanvasLayer;
+export default L.WebGlTemperatureMapLayer;
