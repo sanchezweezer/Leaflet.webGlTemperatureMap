@@ -6859,7 +6859,8 @@
           .on('tileerror', function(t) {
             console.error('Tile not load:', t);
           })
-          .addTo(s);
+          .addTo(s),
+          o.a.control.zoom({ position: 'bottomleft' }).addTo(s);
         var a = o.a.marker(n).addTo(s),
           h = o.a.marker({ lat: 55.67, lng: 37.72 }).addTo(s);
         o.a
