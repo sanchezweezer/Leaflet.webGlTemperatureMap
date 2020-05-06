@@ -1,0 +1,9 @@
+**/README.md
+.git/
+.gitignore
+
+**/.DS_Store
+**.log
+.idea
+./demo
+./docs

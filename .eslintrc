@@ -1,0 +1,17 @@
+{
+  "parser": "babel-eslint",
+  "extends": "standard",
+  "plugins": ["react"],
+  "rules": {
+    "react/jsx-uses-react": 2,
+    "react/jsx-uses-vars": 2,
+    "react/react-in-jsx-scope": 2,
+    "no-labels": 0,
+    "arrow-parens": 0,
+    "semi": [2, "always"],
+    "space-before-function-paren": 0,
+    "camelcase": [1, { "properties": "always" }],
+    "no-multi-str": 1,
+    "eqeqeq": 1
+  }
+}

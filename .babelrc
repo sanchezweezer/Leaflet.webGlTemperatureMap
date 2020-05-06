@@ -1,0 +1,16 @@
+{
+  "env": {
+    "development": {
+      "presets": [["@babel/preset-env", { "loose": true }], "@babel/preset-react"]
+    },
+    "demo": {
+      "presets": [["@babel/preset-env", { "loose": true }], "@babel/preset-react"]
+    },
+    "cjs": {
+      "presets": [["@babel/preset-env", { "loose": true }], "@babel/preset-react"]
+    },
+    "es": {
+      "presets": [["@babel/preset-env", { "loose": true, "modules": false }], "@babel/preset-react"]
+    }
+  }
+}

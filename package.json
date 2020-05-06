@@ -1,0 +1,93 @@
+{
+  "name": "leaflet.webgl-temprature-map",
+  "version": "0.0.1",
+  "description": "Minimalist heat map Leaflet.js library using WebGL inspired by [temperature-map-gl](https://github.com/ham-systems/temperature-map-gl)",
+  "keywords": [
+    "heatmap",
+    "map",
+    "heat",
+    "leaflet",
+    "leaflet.js",
+    "idw"
+  ],
+  "main": "lib/index.js",
+  "module": "es/index.js",
+  "jsnext:main": "es/index.js",
+  "esnext": "src/index.js",
+  "scripts": {
+    "start": "cross-env NODE_ENV=development webpack-dev-server --mode development --open --hot",
+    "build": "npm run lint && concurrently \"npm run build:cjs\" \"npm run build:es\" \"npm run build:demo\"",
+    "build:demo": "cross-env NODE_ENV=demo webpack --mode production",
+    "build:cjs": "cross-env BABEL_ENV=cjs babel src --out-dir lib --ignore src/__tests__",
+    "build:es": "cross-env BABEL_ENV=es babel src --out-dir es --ignore src/__tests__",
+    "test": "jest",
+    "lint": "eslint src/**",
+    "prepublish": "npm run build"
+  },
+  "husky": {
+    "precommit": "npm run build; git add .docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sanchezweezer/Leaflet.webGlTempratureMap.git"
+  },
+  "author": "Sanchez Weezer",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sanchezweezer/Leaflet.webGlTempratureMap/issues"
+  },
+  "homepage": "https://github.com/sanchezweezer/Leaflet.webGlTempratureMap#readme",
+  "files": [
+    "es",
+    "lib",
+    "src",
+    "install"
+  ],
+  "jest": {
+    "testPathIgnorePatterns": [
+      "<rootDir>/es/",
+      "<rootDir>/lib/",
+      "<rootDir>/node_modules/",
+      "<rootDir>/src/__tests__/helper/"
+    ]
+  },
+  "peerDependencies": {
+    "leaflet": ">=1.5.0"
+  },
+  "dependencies": {
+    "leaflet-geometryutil": "^0.9.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.7.2",
+    "@babel/preset-env": "^7.7.1",
+    "@babel/preset-react": "^7.7.0",
+    "babel": "^6.23.0",
+    "babel-eslint": "^8.0.1",
+    "babel-loader": "^8.0.6",
+    "babel-preset-react-app": "^9.0.2",
+    "concurrently": "^5.1.0",
+    "cross-env": "^7.0.2",
+    "css-loader": "^3.2.0",
+    "enzyme": "^3.9.0",
+    "eslint": "^4.8.0",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-node": "^5.2.0",
+    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-react": "^7.19.0",
+    "eslint-plugin-standard": "^3.0.1",
+    "file-loader": "^4.2.0",
+    "html-webpack-plugin": "^3.2.0",
+    "husky": "^4.2.3",
+    "jest": "^21.2.1",
+    "jest-environment-node-debug": "^2.0.0",
+    "jsdom": "^11.3.0",
+    "prettier": "^1.19.1",
+    "style-loader": "^1.0.0",
+    "url-loader": "^2.2.0",
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.9.0"
+  }
+}

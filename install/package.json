@@ -1,0 +1,8 @@
+{
+  "name": "leaflet.webgl-temprature-map/index.js",
+  "private": true,
+  "main": "../lib/index.js",
+  "module": "../es/index.js",
+  "jsnext:main": "../es/index.js",
+  "esnext": "../src/index.js"
+}
