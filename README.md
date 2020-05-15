@@ -3,6 +3,8 @@
 A simple and fast [Leaflet](http://leafletjs.com) canvas smooth polygons plugin.
 Uses [paperJS](http://paperjs.org/) under the hood to draw paths on canvas.
 
+Inspired by [temperature-map-gl](https://github.com/ham-systems/temperature-map-gl)
+
 ## Demo
 
 - [Smooth polygons demo &rarr;](https://sanchezweezer.github.io/Leaflet.webGlTemperatureMap/)
