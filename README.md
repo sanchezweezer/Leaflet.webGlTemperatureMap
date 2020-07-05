@@ -2,6 +2,8 @@
 
 A simple and fast [Leaflet](http://leafletjs.com) Library to draw temperature maps (heat maps) using WebGL in pure Javascript. Except a O(N) pre-process step which is done in Javascipt, all calculations and drawing are done with shaders in WebGL, so it is pretty fast.
 
+Inspired by [temperature-map-gl](https://github.com/ham-systems/temperature-map-gl)
+
 ## Demo
 
 - [Temperature map demo &rarr;](https://sanchezweezer.github.io/Leaflet.webGlTemperatureMap/?isNullColorized=true)
