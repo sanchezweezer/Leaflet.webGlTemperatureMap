@@ -1,13 +1,25 @@
 import L from 'leaflet';
 import TemperatureMapIdw from './temperature-map-idw';
 
+const getPoints = (points, isLatLng) => {
+  if (isLatLng) {
+    return points.map(([lat, lng, value]) => {
+      const point = this._map.latLngToLayerPoint(L.latLng(lat, lng));
+      return [point.x, point.y, value];
+    });
+  } else {
+    return points;
+  }
+};
+
 L.WebGlTemperatureMapLayer = L.Layer.extend({
   // -- initialized is called on prototype
-  initialize: function(options) {
+  initialize: function({ idwOptions, ...options } = {}) {
     this._map = null;
     this._canvas = null;
     this._frame = null;
     this._delegate = null;
+    this._idwOptions = idwOptions || {};
     L.setOptions(this, options);
   },
 
@@ -24,11 +36,12 @@ L.WebGlTemperatureMapLayer = L.Layer.extend({
   },
 
   // -------------------------------------------------------------
-  setPoints: function(points = []) {
+  setPoints: function(points = [], options = {}) {
     if (this.tempMap && this._map) {
       this.offsetState = this._map.containerPointToLatLng([0, 0]);
       this.zoomState = this._map.getZoom();
-      this.tempMap.set_points(points);
+      const _points = getPoints(points, options.isLatLng);
+      this.tempMap.set_points(_points);
 
       this.needRedraw();
       return this;
@@ -76,7 +89,7 @@ L.WebGlTemperatureMapLayer = L.Layer.extend({
 
     map.on(this.getEvents(), this);
 
-    this.tempMap = new TemperatureMapIdw({ canvas: this._canvas, debug_points: false });
+    this.tempMap = new TemperatureMapIdw({ ...this._idwOptions, canvas: this._canvas });
 
     let del = this._delegate || this;
     del.onLayerDidMount && del.onLayerDidMount(); // -- callback
@@ -156,8 +169,8 @@ L.WebGlTemperatureMapLayer = L.Layer.extend({
   }
 });
 
-L.webGlTemperatureMapLayer = function() {
-  return new L.WebGlTemperatureMapLayer();
+L.webGlTemperatureMapLayer = function(options) {
+  return new L.WebGlTemperatureMapLayer(options);
 };
 
 export default L.WebGlTemperatureMapLayer;

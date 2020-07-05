@@ -1,4 +1,4 @@
-let vertex_shader_source =
+const vertex_shader_source =
   '\
   attribute vec2 position;\
 \
@@ -7,7 +7,7 @@ let vertex_shader_source =
   }\
 ';
 
-let computation_fragment_shader_source =
+const computation_fragment_shader_source =
   '\
   precision highp float;\
 \
@@ -26,8 +26,8 @@ let computation_fragment_shader_source =
   }\
 ';
 
-let draw_fragment_shader_source =
-  '\
+const get_draw_fragment_shader_source = ({ isNullColorized } = {}) =>
+  `\
   precision highp float;\
 \
   uniform sampler2D computation_texture;\
@@ -36,11 +36,13 @@ let draw_fragment_shader_source =
   void main(void) {\
     vec4 data = texture2D(computation_texture, vec2(gl_FragCoord.x/screen_size.x, 1.0-gl_FragCoord.y/screen_size.y));\
     float val = data.x/data.y;\
-    vec3 color = vec3(max((val-0.5)*2.0, 0.0), 1.0 - 2.0*abs(val - 0.5), max((0.5-val)*2.0, 0.0));\
+    vec3 color = vec3(max((val-0.5)*2.0, 0.0), ${
+      isNullColorized ? '1.0 - 2.0*abs(val - 0.5)' : '0.0'
+    }, max((0.5-val)*2.0, 0.0));\
     gl_FragColor.rgb = pow(color, vec3(1.0/gamma));\
-    gl_FragColor.a = 1.0;\
+    gl_FragColor.a = ${isNullColorized ? '1.0' : 'max(abs((0.5 - val)*2.0), abs(max((val-0.5)*2.0, 0.0)))'};\
   }\
-';
+`;
 
 function get_shader(gl, source, type) {
   if (type === 'fragment') {
@@ -86,6 +88,7 @@ let default_options = {
   gamma: 2.2,
   debug_points: false, // work only for debug - not right position on zoom after move
   framebuffer_factor: 1,
+  isNullColorized: false,
   point_text: function(val) {
     let v;
     if (val < 1) v = val.toFixed(2);
@@ -146,6 +149,7 @@ function TemperatureMapGl(options = {}) {
   this.p = _options.p;
   this.range_factor = _options.range_factor;
   this.gamma = _options.gamma;
+  this.isNullColorized = _options.isNullColorized;
 
   this.debug_points = _options.debug_points;
   this.unit = _options.unit;
@@ -157,15 +161,6 @@ function TemperatureMapGl(options = {}) {
   this.init_shaders();
   this.resize(this.canvas.clientWidth, this.canvas.clientHeight);
 }
-
-TemperatureMapGl.prototype.update_options = function(options) {
-  if (options.p) this.p = options.p;
-  if (options.range_factor) this.range_factor = options.range_factor;
-  if (options.gamma) this.gamma = options.gamma;
-  if (options.debug_points) this.debug_points = options.debug_points;
-
-  this.draw();
-};
 
 TemperatureMapGl.is_supported = function() {
   let canvas = document.createElement('canvas');
@@ -255,10 +250,14 @@ TemperatureMapGl.prototype.init_buffers = function() {
 TemperatureMapGl.prototype.init_shaders = function() {
   if (!this.context) return;
 
-  let gl = this.context;
-  let vertex_shader = get_shader(gl, vertex_shader_source, 'vertex');
-  let computation_fragment_shader = get_shader(gl, computation_fragment_shader_source, 'fragment');
-  let draw_fragment_shader = get_shader(gl, draw_fragment_shader_source, 'fragment');
+  const gl = this.context;
+  const vertex_shader = get_shader(gl, vertex_shader_source, 'vertex');
+  const computation_fragment_shader = get_shader(gl, computation_fragment_shader_source, 'fragment');
+  const draw_fragment_shader = get_shader(
+    gl,
+    get_draw_fragment_shader_source({ isNullColorized: this.isNullColorized }),
+    'fragment'
+  );
 
   this.computation_program = get_program(gl, vertex_shader, computation_fragment_shader);
   this.position_attribute = gl.getAttribLocation(this.computation_program, 'position');
@@ -286,7 +285,7 @@ TemperatureMapGl.prototype.draw = function({ scale = 1.0, transform = [0, 0] } =
 
   gl.enable(gl.BLEND);
   gl.blendEquation(gl.FUNC_ADD);
-  gl.blendFunc(gl.ONE, gl.ONE);
+  gl.blendFunc(gl.SRC_ALPHA, gl.SRC_ALPHA);
 
   gl.clearColor(0.0, 0.0, 0.0, 1.0);
 

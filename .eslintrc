@@ -12,6 +12,7 @@
     "space-before-function-paren": 0,
     "camelcase": [1, { "properties": "always" }],
     "no-multi-str": 1,
-    "eqeqeq": 1
+    "eqeqeq": 1,
+    "indent": [1, 2]
   }
 }
