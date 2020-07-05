@@ -54,7 +54,7 @@ import('./config').then((defaultData) => {
   const endFlyPoint = L.marker({ lat: 55.67, lng: 37.72 }).addTo(map);
   const tempMap = L.webGlTemperatureMapLayer({ idwOptions: { isNullColorized } }).addTo(map);
 
-  tempMap.setPoints([[55.75, 37.61, 1]], { isLatLng: true }); //arr);
+  tempMap.setPoints(arr);
 
   let flyPoint = 'start';
 
