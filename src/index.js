@@ -1,7 +1,7 @@
 import L from 'leaflet';
 import TemperatureMapIdw from './temperature-map-idw';
 
-const getPoints = (points, isLatLng) => {
+const getPoints = (points = [], isLatLng) => {
   if (isLatLng) {
     return points.map(([lat, lng, value]) => {
       const point = this._map.latLngToLayerPoint(L.latLng(lat, lng));
@@ -36,7 +36,7 @@ L.WebGlTemperatureMapLayer = L.Layer.extend({
   },
 
   // -------------------------------------------------------------
-  setPoints: function(points = [], options = {}) {
+  setPoints: function(points = [], options = { isLatLng: false }) {
     if (this.tempMap && this._map) {
       this.offsetState = this._map.containerPointToLatLng([0, 0]);
       this.zoomState = this._map.getZoom();
