@@ -98,6 +98,10 @@ Return Object of class
 
 #### 0.1.0 &mdash; July 05, 2020
 
+- Fix default options
+
+#### 0.1.0 &mdash; July 05, 2020
+
 - Add options to temperature map.
 - Add ability to set background transparent
 - Add ability to set points as lat,lng or L.Point
