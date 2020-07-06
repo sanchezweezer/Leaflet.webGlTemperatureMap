@@ -88,7 +88,7 @@ let default_options = {
   gamma: 2.2,
   debug_points: false, // work only for debug - not right position on zoom after move
   framebuffer_factor: 1,
-  isNullColorized: false,
+  isNullColorized: true,
   point_text: function(val) {
     let v;
     if (val < 1) v = val.toFixed(2);
