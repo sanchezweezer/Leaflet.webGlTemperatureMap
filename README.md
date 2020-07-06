@@ -12,7 +12,7 @@ Inspired by [temperature-map-gl](https://github.com/ham-systems/temperature-map-
 ## Basic Usage
 
 ```shell script
-    npm i --save leaflet.webgl-temprature-map
+    npm i --save leaflet.webgl-temperature-map
 ```
 
 ```js
@@ -60,7 +60,7 @@ Return Object of class
   - gamma: 2.2,
   - debug_points: false, // work only for debug - not right position on zoom after move
   - framebuffer_factor: 1,
-  - isNullColorized: false, // to transparent background set true
+  - isNullColorized: true, // to transparent background set false
   - point_text:
   ```function(val) {
     let v;
