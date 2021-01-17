@@ -56,6 +56,7 @@
     "leaflet": ">=1.5.0"
   },
   "dependencies": {
+    "earcut": "^2.2.2",
     "leaflet-geometryutil": "^0.9.1"
   },
   "devDependencies": {

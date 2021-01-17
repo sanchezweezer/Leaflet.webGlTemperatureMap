@@ -7,6 +7,26 @@ const vertex_shader_source =
   }\
 ';
 
+const vertex_shader_stencil_poly =
+  '\
+  attribute vec2 position;\
+  \
+  uniform float scale;\
+  uniform vec2 translation;\
+\
+  void main(void) {\
+    gl_Position = vec4((position.x*scale-translation.x)*2.0-1.0, 1.0-(position.y*scale-translation.y)*2.0, 1.0, 1.0);\
+  }\
+';
+
+const fragment_shader_stencil_poly = '\
+\
+  void main(void) {\
+  \
+     gl_FragColor = vec4(0, 0, 0, 1.0);\
+  }\
+';
+
 const computation_fragment_shader_source =
   '\
   precision highp float;\
@@ -119,7 +139,9 @@ function TemperatureMapGl(options = {}) {
   canvas.style.opacity = _options.opacity;
   this.canvas = _options.canvas;
 
-  this.context = this.canvas.getContext('webgl') || this.canvas.getContext('experimental-webgl');
+  this.context =
+    this.canvas.getContext('webgl', { stencil: true }) ||
+    this.canvas.getContext('experimental-webgl', { stencil: true });
   if (!this.context) console.log('Your browser does not support webgl');
 
   if (!this.context || !this.context.getExtension('OES_texture_float')) {
@@ -164,12 +186,12 @@ function TemperatureMapGl(options = {}) {
 
 TemperatureMapGl.is_supported = function() {
   let canvas = document.createElement('canvas');
-  let context = canvas.getContext('webgl');
+  let context = canvas.getContext('webgl', { stencil: true });
   return canvas && context && context.getExtension('OES_texture_float');
 };
 
-TemperatureMapGl.prototype.set_points = function(points, low_val, high_val, normal_val) {
-  this.points = points;
+TemperatureMapGl.prototype.set_points = function(points, low_val, high_val, normal_val, { mask = false } = {}) {
+  this[mask ? 'mask_points' : 'points'] = points;
   if (!this.context) return;
 
   if (points.length) {
@@ -201,7 +223,10 @@ TemperatureMapGl.prototype.set_points = function(points, low_val, high_val, norm
 
       translated_points.push(p);
     }
-    this.translated_points = translated_points;
+
+    this[mask ? 'translated_mask_points' : 'translated_points'] = mask
+      ? translated_points.reduce((result, [lat, lng]) => [...result, lat, lng], [])
+      : translated_points;
   }
 };
 
@@ -215,6 +240,14 @@ TemperatureMapGl.prototype.init_buffers = function() {
   let vertices = [1.0, 1.0, -1.0, 1.0, 1.0, -1.0, -1.0, -1.0];
 
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+
+  this.stencil_vertices_buffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.stencil_vertices_buffer);
+
+  let stencil_vertices = this.translated_mask_points || [1.0, 1.0, -1.0, 1.0, 1.0, -1.0, -1.0, -1.0];
+  this.stencil_points_count = stencil_vertices.length / 2;
+
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(stencil_vertices), gl.STATIC_DRAW);
 
   this.computation_framebuffer_width = Math.ceil(this.canvas.width * this.framebuffer_factor);
   this.computation_framebuffer_height = Math.ceil(this.canvas.height * this.framebuffer_factor);
@@ -252,12 +285,19 @@ TemperatureMapGl.prototype.init_shaders = function() {
 
   const gl = this.context;
   const vertex_shader = get_shader(gl, vertex_shader_source, 'vertex');
+  const stencil_vertex_shader = get_shader(gl, vertex_shader_stencil_poly, 'vertex');
+  const stencil_fragment_shader = get_shader(gl, fragment_shader_stencil_poly, 'fragment');
   const computation_fragment_shader = get_shader(gl, computation_fragment_shader_source, 'fragment');
   const draw_fragment_shader = get_shader(
     gl,
     get_draw_fragment_shader_source({ isNullColorized: this.isNullColorized }),
     'fragment'
   );
+
+  this.stencil_program = get_program(gl, stencil_vertex_shader, stencil_fragment_shader);
+  this.stencil_position_attribute = gl.getAttribLocation(this.stencil_program, 'position');
+  this.stencil_scale_uniform = gl.getUniformLocation(this.stencil_program, 'scale');
+  this.stencil_translation_uniform = gl.getUniformLocation(this.stencil_program, 'translation');
 
   this.computation_program = get_program(gl, vertex_shader, computation_fragment_shader);
   this.position_attribute = gl.getAttribLocation(this.computation_program, 'position');
@@ -276,14 +316,18 @@ TemperatureMapGl.prototype.init_shaders = function() {
   this.gamma_uniform = gl.getUniformLocation(this.draw_program, 'gamma');
 };
 
-TemperatureMapGl.prototype.draw = function({ scale = 1.0, transform = [0, 0] } = {}) {
+TemperatureMapGl.prototype.draw = function({ scale = 1.0, transform = [0.0, 0.0] } = {}) {
   if (!this.context) return;
+  let w = this.canvas.width;
+  let h = this.canvas.height;
 
   let gl = this.context;
 
   gl.disable(gl.DEPTH_TEST);
 
   gl.enable(gl.BLEND);
+  gl.enable(gl.STENCIL_TEST);
+
   gl.blendEquation(gl.FUNC_ADD);
   gl.blendFunc(gl.SRC_ALPHA, gl.SRC_ALPHA);
 
@@ -297,7 +341,7 @@ TemperatureMapGl.prototype.draw = function({ scale = 1.0, transform = [0, 0] } =
   gl.uniform2f(this.translation_uniform, transform[0], transform[1]);
   gl.bindFramebuffer(gl.FRAMEBUFFER, this.computation_framebuffer);
   gl.viewport(0, 0, this.computation_framebuffer_width, this.computation_framebuffer_height);
-  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT);
 
   for (let i = 0; i < this.translated_points.length; ++i) {
     let p = this.translated_points[i];
@@ -310,8 +354,21 @@ TemperatureMapGl.prototype.draw = function({ scale = 1.0, transform = [0, 0] } =
   }
 
   gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-  gl.clearColor(0.0, 0.0, 0.0, 1.0);
-  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  gl.clearColor(0.0, 0.0, 0.0, 0);
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT);
+
+  gl.stencilOp(gl.KEEP, gl.KEEP, gl.REPLACE);
+  gl.stencilFunc(gl.ALWAYS, 1, 0xff);
+
+  gl.useProgram(this.stencil_program);
+  gl.uniform1f(this.stencil_scale_uniform, scale);
+  gl.uniform2f(this.stencil_translation_uniform, transform[0] / w, transform[1] / h);
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.stencil_vertices_buffer);
+  gl.vertexAttribPointer(this.stencil_position_attribute, 2, gl.FLOAT, false, 0, 0);
+
+  gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.stencil_points_count || 4);
+
+  gl.stencilFunc(gl.EQUAL, 1, 0xff);
 
   gl.useProgram(this.draw_program);
   gl.activeTexture(gl.TEXTURE0);
@@ -359,7 +416,7 @@ TemperatureMapGl.prototype.debug_points = function(scale, offset) {
   oldScale = scale;
 };
 
-TemperatureMapGl.prototype.resize = function(width, height) {
+TemperatureMapGl.prototype.resize = function(width = this.canvas.clientWidth, height = this.canvas.clientHeight) {
   this.canvas.height = height;
   this.canvas.width = width;
   this.canvas.style.height = this.canvas.height + 'px';

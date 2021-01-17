@@ -3,6 +3,8 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
 import '../src';
+import { exp } from './config-test';
+import { mask } from './mask';
 import('./config').then((defaultData) => {
   const { arr } = defaultData;
 
@@ -16,7 +18,7 @@ import('./config').then((defaultData) => {
 
   const startZoom = 16;
 
-  const startPoint = { lat: 55.75, lng: 37.61 };
+  const startPoint = { lat: 43.3990609000508, lng: 39.9655151367188 };
 
   const mapOptions = {};
   const tileOptions = {};
@@ -54,7 +56,8 @@ import('./config').then((defaultData) => {
   const endFlyPoint = L.marker({ lat: 55.67, lng: 37.72 }).addTo(map);
   const tempMap = L.webGlTemperatureMapLayer({ idwOptions: { isNullColorized } }).addTo(map);
 
-  tempMap.setPoints(arr);
+  tempMap.setPoints(exp, { isLatLng: true, coordinatesType: 'layer', draw: false }); // if you need to set mast set draw: false to app points
+  tempMap.setMask(mask, { isLatLng: true, coordinatesType: 'layer' });
 
   let flyPoint = 'start';
 

@@ -4,6 +4,10 @@ A simple and fast [Leaflet](http://leafletjs.com) Library to draw temperature ma
 
 Inspired by [temperature-map-gl](https://github.com/ham-systems/temperature-map-gl)
 
+Triangulation of mask powered by [earcut](https://github.com/mapbox/earcut)
+
+In plans rewrite hole package to pixi or three.js (or may be pts) from naked webGL
+
 ## Demo
 
 - [Temperature map demo &rarr;](https://sanchezweezer.github.io/Leaflet.webGlTemperatureMap/?isNullColorized=true)

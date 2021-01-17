@@ -1,11 +1,12 @@
 import L from 'leaflet';
+import earcut from 'earcut';
 import TemperatureMapIdw from './temperature-map-idw';
 
-const getPoints = (map, points = [], isLatLng) => {
+const getPoints = (map, points = [], { isLatLng, isValue } = {}) => {
   if (isLatLng) {
     return points.map(([lat, lng, value]) => {
-      const point = map.latLngToLayerPoint(L.latLng(lat, lng));
-      return [point.x, point.y, value];
+      const point = map.latLngToLayerPoint(L.latLng(isValue ? lat : lng, isValue ? lng : lat));
+      return isValue ? [point.x, point.y, value] : [point.x, point.y];
     });
   } else {
     return points;
@@ -36,13 +37,39 @@ L.WebGlTemperatureMapLayer = L.Layer.extend({
   },
 
   // -------------------------------------------------------------
-  setPoints: function(points = [], options = { isLatLng: false }) {
+  setPoints: function(points = [], options = { isLatLng: false, draw: true }) {
     if (this.tempMap && this._map) {
       this.offsetState = this._map.containerPointToLatLng([0, 0]);
       this.zoomState = this._map.getZoom();
-      const _points = getPoints(this._map, points, options.isLatLng);
+      const _points = getPoints(this._map, points, { isValue: true, isLatLng: options.isLatLng });
       this.tempMap.set_points(_points);
-      this.needRedraw();
+      options.draw && this.needRedraw();
+      return this;
+    }
+    return undefined;
+  },
+
+  // -------------------------------------------------------------
+  setMask: function(points = [], options = { isLatLng: false, draw: true }) {
+    if (this.tempMap && this._map) {
+      this.offsetState = this._map.containerPointToLatLng([0, 0]);
+      this.zoomState = this._map.getZoom();
+      const flattenPoints = earcut.flatten(points);
+      const result = earcut(flattenPoints.vertices, flattenPoints.holes, flattenPoints.dimensions);
+      const triangles = [];
+      for (let i = 0; i < result.length; i++) {
+        const index = result[i];
+        triangles.push([
+          flattenPoints.vertices[index * flattenPoints.dimensions],
+          flattenPoints.vertices[index * flattenPoints.dimensions + 1]
+        ]);
+      }
+      const _triangles = getPoints(this._map, triangles, { isLatLng: options.isLatLng, isValue: false });
+      // console.log('deviation: ' + earcut.deviation(ttt.vertices, ttt.holes, ttt.dimensions, result));
+
+      this.tempMap.set_points(_triangles, undefined, undefined, undefined, { mask: true });
+      this.tempMap.resize();
+      options.draw && this.needRedraw();
       return this;
     }
     return undefined;
@@ -52,6 +79,7 @@ L.WebGlTemperatureMapLayer = L.Layer.extend({
   _onLayerDidResize: function(resizeEvent) {
     this._canvas.width = resizeEvent.newSize.x;
     this._canvas.height = resizeEvent.newSize.y;
+    this.tempMap.resize();
   },
   // -------------------------------------------------------------
   _onLayerDidMove: function() {
