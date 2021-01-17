@@ -1,6 +1,6 @@
 {
   "name": "leaflet.webgl-temperature-map",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Minimalist heat map Leaflet.js library using WebGL inspired by [temperature-map-gl](https://github.com/ham-systems/temperature-map-gl)",
   "keywords": [
     "heatmap",
